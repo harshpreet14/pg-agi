@@ -58,12 +58,7 @@ const loginUser = async(req, res) =>{
         }
         //check if password match
         const match = await comparePassword(password, user.password)
-
-        jwt.sign({email : user.email, id: user._id, firstName: user.firstName, lastName: user.lastName, company:user.company, location: user.location}, process.env.JWT_SECRET, {}, (err, token) => {
-            if(err) throw err;
-            res.cookie('token', token).json(user)
-        })
-
+        
         if(match){
             res.json('Passwords match')
         }
@@ -73,8 +68,14 @@ const loginUser = async(req, res) =>{
            }) 
         }
 
+        jwt.sign({email : user.email, id: user._id, firstName: user.firstName, lastName: user.lastName, company:user.company, location: user.location}, process.env.JWT_SECRET, {}, (err, token) => {
+            if(err) throw err;
+            res.cookie('token', token).json(user)
+        })
+
     }catch(error){
-        console.log(error)
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
 
@@ -86,10 +87,13 @@ const getProfile = (req, res) =>{
             res.json(user)
         })
     }else{
-        res.json(null)
+        res.status(401).json({ error: 'No token provided' });
     }
 }
 
 module.exports = {
-    test, registerUser, loginUser, getProfile
+    test, 
+    registerUser, 
+    loginUser, 
+    getProfile
 }

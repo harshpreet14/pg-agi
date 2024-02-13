@@ -16,7 +16,7 @@ export function UserContextProvider({children}){
     }, [])
 
     return(
-        <UserContext.Provider value={user, setUser} >
+        <UserContext.Provider value={{user, setUser}} >
             {children}
         </UserContext.Provider>
     )
