@@ -1,6 +1,10 @@
+import axios from 'axios';
 import {useState} from 'react';
+import {toast} from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
+    const navigate = useNavigate();
     const [data, setData] = useState({
         firstName : "",
         lastName : "",
@@ -9,6 +13,25 @@ function Register() {
         email : "",
         password: ""
     })
+
+    const registerUser = async (e) =>{
+        e.preventDefault();
+        const {firstName, lastName, company, location, email, password} = data;
+        try{
+            const {data} = await axios.post('/register', {
+                firstName, lastName, company, location, email, password
+            })
+            if(data.error){
+                toast.error(data.error)
+            }else{
+                setData({})
+                toast.success('Registration Successful. Welcome!')
+                navigate('/login');
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
 
     return (
         <div>
@@ -25,7 +48,7 @@ function Register() {
               <input type='text' placeholder="johndoe@xcompany.com" value={data.email} onChange={(e) => setData({...data, email: e.target.value})}></input> 
               <label> Password </label> 
               <input type='password' placeholder="enter password" value={data.password} onChange={(e) => setData({...data, password: e.target.value})}></input> 
-              <button type='submit'> Register</button>
+              <button type='submit' onClick={registerUser}> Register</button>
             </form>
         </div>
     )
