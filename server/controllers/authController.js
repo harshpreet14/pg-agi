@@ -58,20 +58,19 @@ const loginUser = async(req, res) =>{
         }
         //check if password match
         const match = await comparePassword(password, user.password)
-        
+
         if(match){
-            res.json('Passwords match')
+            jwt.sign({email : user.email, id: user._id, firstName: user.firstName, lastName: user.lastName, company:user.company, location: user.location}, process.env.JWT_SECRET, {}, (err, token) => {
+                if(err) throw err;
+                res.cookie('token', token).json(user)
+            })
+            
         }
         if(!match){
            res.json({
             error: 'Password or Email is incorrect.'
            }) 
         }
-
-        jwt.sign({email : user.email, id: user._id, firstName: user.firstName, lastName: user.lastName, company:user.company, location: user.location}, process.env.JWT_SECRET, {}, (err, token) => {
-            if(err) throw err;
-            res.cookie('token', token).json(user)
-        })
 
     }catch(error){
         console.log(error);
@@ -80,14 +79,12 @@ const loginUser = async(req, res) =>{
 }
 
 const getProfile = (req, res) =>{
-    const {token} = req.cookies
-    if(token){
-        jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) =>{
-            if(err) throw err
-            res.json(user)
-        })
-    }else{
-        res.status(401).json({ error: 'No token provided' });
+    if (req.user) {
+        // Send back the user profile information
+        res.json(req.user);
+    } else {
+        // If for some reason req.user is not populated, send an error
+        res.status(404).json({ error: 'User profile not found' });
     }
 }
 
