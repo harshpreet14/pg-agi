@@ -1,13 +1,15 @@
 import { useContext } from "react";
 import {UserContext} from '../../context/userContext';
+import Sidebar from '../components/Sidebar';
+
 
 function Home() {
     const {user} = useContext(UserContext);
 
     return (
         <div>
-            <h1>Home</h1>
-            <div>{user.firstName}</div>
+            <Sidebar/>
+
         </div>
     )
 }

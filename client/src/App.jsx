@@ -12,7 +12,7 @@ axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <>
+    <div >
       <UserContextProvider>
       <Toaster position='top-right' toastOptions={{duration:2000}} />
       <Routes>
@@ -22,7 +22,7 @@ function App() {
         <Route path='/login' element = {<Login/>} />
       </Routes>
       </UserContextProvider>
-    </>
+    </div>
   )
 }
 
